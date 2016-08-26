@@ -1,0 +1,94 @@
+#!/bin/bash
+
+export LANG=C
+
+# const system
+__DIR_NAME=`which dirname`
+__BASE_NAME=`which basename`
+
+# const script
+ORGANIZATION_DIR="src/github.com"
+ORGANIZATION_NAME="fkei"
+
+log() {
+  echo "[LOG] $1"
+}
+
+__execpath(){
+  if [ ! -e "$1" ]; then
+    return 1
+  fi
+  pushd `${__DIR_NAME} $1` >/dev/null 2>&1
+  [ $? -eq 1 ] && exit 1
+  _dir=`pwd`
+  popd >/dev/null 2>&1
+  echo ${_dir}
+}
+__SCRIPT_DIR=`__execpath $0`
+
+#log "script dir: ${__SCRIPT_DIR}"
+
+
+__goget() {
+  vcs=$1
+  pkg=$2
+  rev=$3
+  pkg_url=https://${pkg}
+  target_dir=${__SCRIPT_DIR}/src/${pkg}
+
+  log "Getting dependency    -> ${vcs}:${pkg}@${rev}"
+
+  if [ ! -d ${target_dir} ]; then
+    GOPATH=${__SCRIPT_DIR} go get ${pkg}
+  fi
+
+  case $vcs in
+    git)
+      pushd ${target_dir} >/dev/null 2>&1
+      git reset --quiet --hard ${rev}
+
+      rev_reset=`git --no-pager log -n 1 --pretty=format:"%H"`
+
+      if [ "_${rev}" == "_${rev_reset}" ]; then
+        log "git reset [success] : ${rev}  ==  ${rev_reset}"
+      else
+        log "git reset [failure] : ${rev}  !=  ${rev_reset}"
+      fi
+      #git --no-pager log -n 1 --pretty=oneline
+
+      popd >/dev/null 2>&1
+      ;;
+  esac
+}
+
+
+install() {
+  __goget git github.com/goadesign/goa 398e76a5b137cd5d46d6a2973015c92fa9e0645a
+}
+uninstall() {
+  find ./src -mindepth 2 -maxdepth 2 | grep -v ${ORGANIZATION_NAME} | tee -a /dev/stderr | xargs rm -rf
+  find ./src -mindepth 1  | grep -v ${ORGANIZATION_DIR} | tee -a /dev/stderr | xargs rm -rf
+}
+usage() {
+  cat <<_EOT_
+Usage:
+  $0 [install|uninstall]
+
+Description:
+  vendor install script
+
+Options:
+  no set
+
+_EOT_
+  exit 1
+}
+
+# run!!
+if [ "x$1" == "xinstall" ]; then
+  install
+elif [ "x$1" == "xuninstall" ]; then
+  uninstall
+else
+  usage
+fi
