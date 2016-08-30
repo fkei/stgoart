@@ -33,16 +33,20 @@ __goget() {
   vcs=$1
   pkg=$2
   rev=$3
+  recursive=$4
+
+  [ "x${recursive}" == "xrecursive" ] && recursive="/..."
+
   pkg_url=https://${pkg}
   target_dir=${__SCRIPT_DIR}/src/${pkg}
 
-  log "Getting dependency    -> ${vcs}:${pkg}@${rev}"
+  log "Getting dependency    -> ${vcs}:${pkg}${recursive}@${rev}"
 
   if [ ! -d ${target_dir} ]; then
-    GOPATH=${__SCRIPT_DIR} go get ${pkg}
+    GOPATH=${__SCRIPT_DIR} go get ${pkg}${recursive}
   fi
 
-  case $vcs in
+  case ${vcs} in
     git)
       pushd ${target_dir} >/dev/null 2>&1
       git reset --quiet --hard ${rev}
@@ -63,12 +67,14 @@ __goget() {
 
 
 install() {
-  __goget git github.com/goadesign/goa 398e76a5b137cd5d46d6a2973015c92fa9e0645a
+  __goget git github.com/goadesign/goa 398e76a5b137cd5d46d6a2973015c92fa9e0645a recursive
 }
+
 uninstall() {
   find ./src -mindepth 2 -maxdepth 2 | grep -v ${ORGANIZATION_NAME} | tee -a /dev/stderr | xargs rm -rf
   find ./src -mindepth 1  | grep -v ${ORGANIZATION_DIR} | tee -a /dev/stderr | xargs rm -rf
 }
+
 usage() {
   cat <<_EOT_
 Usage:
