@@ -22,8 +22,21 @@ clean:
 deps:
 	$(__PWD)/vendor install
 
+gen:
+	GOPATH=$(__PWD) ./bin/goagen bootstrap \
+		-d github.com/fkei/stgoart/design \
+		-o src/github.com/fkei/stgoart
+
 start:
-	GOPATH=${__GOPATH} go run ./src/github.com/fkei/stgoart/main.go
+	#GOPATH=${__GOPATH} go run  ./src/github.com/fkei/stgoart/*.go
+	cd ./src/github.com/fkei/stgoart; \
+		GOPATH=${__GOPATH} go run *.go
+
+build:
+	mkdir -p $(__DIST)
+	GOPATH=${__GOPATH} go build -o $(__DIST)/stgoart ./src/github.com/fkei/stgoart
+	GOPATH=${__GOPATH} go build -o $(__DIST)/adder-cli ./src/github.com/fkei/stgoart/tool/adder-cli
+
 
 test:
 	@echo "test"
@@ -34,7 +47,6 @@ bench:
 
 .PHONY: all \
 	help \
-	all \
 	clean \
 	deps \
 	start \

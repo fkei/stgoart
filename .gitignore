@@ -29,6 +29,7 @@ _testmain.go
 stgoart.iml
 bin/
 pkg/
+dist/
 
 /src/*
 !/src/github.com
@@ -36,3 +37,8 @@ pkg/
 !/src/github.com/fkei
 /src/github.com/fkei/*
 !/src/github.com/fkei/stgoart
+/src/github.com/fkei/stgoart/*
+!/src/github.com/fkei/stgoart/design
+!/src/github.com/fkei/stgoart/main.go
+!/src/github.com/fkei/stgoart/operands.go
+!/src/github.com/fkei/stgoart/swagger.go
