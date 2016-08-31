@@ -26,7 +26,7 @@ __PKG_PROJECT_DESIGN=$(__GITHUB)/$(__ORGS)/$(__PROJECT)/$(__DESIGN)
 
 TARGET=$(target)
 
-all: deps start
+all: deps gen start
 
 clean:
 	rm -rf $(__BIN)
