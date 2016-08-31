@@ -18,13 +18,12 @@ func main() {
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
-	// Mount "operands" controller
-	c := NewOperandsController(service)
-	app.MountOperandsController(service, c)
-
+	// Mount "ping" controller
+	c := NewPingController(service)
+	app.MountPingController(service, c)
 	// Mount "swagger" controller
-	cs := NewSwaggerController(service)
-	app.MountSwaggerController(service, cs)
+	c2 := NewSwaggerController(service)
+	app.MountSwaggerController(service, c2)
 
 	// Start service
 	if err := service.ListenAndServe(":3000"); err != nil {

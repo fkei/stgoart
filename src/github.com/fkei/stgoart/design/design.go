@@ -12,14 +12,10 @@ var _ = API("adder", func() {
 	Scheme("http")
 })
 
-var _ = Resource("operands", func() {
-	Action("add", func() {
-		Routing(GET("add/:left/:right"))
-		Description("add returns the sum of the left and right parameters in the response body")
-		Params(func() {
-			Param("left", Integer, "Left operand")
-			Param("right", Integer, "Right operand")
-		})
+var _ = Resource("ping", func() {
+	Action("ping", func() {
+		Routing(GET("ping"))
+		Description("Return the server status(ping/pong)")
 		Response(OK, "text/plain")
 	})
 })
@@ -28,5 +24,5 @@ var _ = Resource("swagger", func() {
 	Origin("*", func() {
 		Methods("GET") // Allow all origins to retrieve the Swagger JSON (CORS)
 	})
-	Files("/swagger.json", "swagger/swagger.json")
+	Files("/swagger.json", "public/swagger/swagger.json")
 })
