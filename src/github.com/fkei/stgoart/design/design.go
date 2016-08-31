@@ -13,7 +13,7 @@ var _ = API("adder", func() {
 })
 
 var _ = Resource("ping", func() {
-	Action("ping", func() {
+	Action("show", func() {
 		Routing(GET("ping"))
 		Description("Return the server status(ping/pong)")
 		Response(OK, "text/plain")

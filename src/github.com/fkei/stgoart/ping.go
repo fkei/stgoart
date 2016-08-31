@@ -15,12 +15,12 @@ func NewPingController(service *goa.Service) *PingController {
 	return &PingController{Controller: service.NewController("PingController")}
 }
 
-// Ping runs the ping action.
-func (c *PingController) Ping(ctx *app.PingPingContext) error {
-	// PingController_Ping: start_implement
+// Show runs the show action.
+func (c *PingController) Show(ctx *app.ShowPingContext) error {
+	// PingController_Show: start_implement
 
 	// Put your logic here
 
-	// PingController_Ping: end_implement
-	return nil
+	// PingController_Show: end_implement
+	return ctx.OK([]byte("pong"))
 }
