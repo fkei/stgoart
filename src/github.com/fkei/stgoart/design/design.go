@@ -5,9 +5,9 @@ import (
 	. "github.com/goadesign/goa/design/apidsl"
 )
 
-var _ = API("adder", func() {
+var _ = API("stgoart", func() {
 	Title("st[goa]rt")
-	Description("A teaser for goa")
+	Description("Hello world for goa")
 	Host("localhost:3000")
 	Scheme("http")
 })

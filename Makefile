@@ -1,8 +1,7 @@
-__PWD=$(shell pwd)
-__BIN=$(__PWD)/bin
-__SRC=$(__PWD)/src
-__PKG=$(__PWD)/pkg
-__DIST=$(__PWD)/dist
+__BIN=bin
+__SRC=src
+__PKG=pkg
+__DIST=dist
 
 __GITHUB=github.com
 __ORGS=fkei
@@ -13,13 +12,14 @@ __PUBLIC=public
 
 __PROG=$(__DIST)/$(__NAME)
 __PATH=$(__BIN):$$PATH
-__GOPATH=$(__PWD)
+__GOPATH=$(shell pwd)
 
 __SRC_GITHUB_DIR=$(__SRC)/$(__GITHUB)
 __SRC_ORGS_DIR=$(__SRC_GITHUB_DIR)/$(__ORGS)
 
 __SRC_PROJECT_DIR=$(__SRC_ORGS_DIR)/$(__PROJECT)
 __SRC_PROJECT_PUBLIC_DIR=$(__SRC_PROJECT_DIR)/$(__PUBLIC)
+__PKG_PROJECT=$(__GITHUB)/$(__ORGS)/$(__PROJECT)
 
 __SRC_PROJECT_DESIGN_DIR=$(__SRC_PROJECT_DIR)/$(__DESIGN)
 __PKG_PROJECT_DESIGN=$(__GITHUB)/$(__ORGS)/$(__PROJECT)/$(__DESIGN)
@@ -32,10 +32,10 @@ clean:
 	rm -rf $(__BIN)
 	rm -rf $(__PKG)
 	rm -rf $(__DIST)
-	$(__PWD)/vendor uninstall
+	vendor uninstall
 
 deps:
-	$(__PWD)/vendor install
+	vendor install
 
 start:
 	@#GOPATH=${__GOPATH} go run  $(__SRC_PROJECT_DIR)/*.go
@@ -44,8 +44,8 @@ start:
 
 build:
 	mkdir -p $(__DIST)
-	GOPATH=${__GOPATH} go build -o $(__DIST)/$(__PROJECT) $(__SRC_PROJECT_DIR)
-	GOPATH=${__GOPATH} go build -o $(__DIST)/$(__PROJECT)-cli $(__SRC_PROJECT_DIR)/tool/adder-cli
+	GOPATH=${__GOPATH} go build -o $(__DIST)/$(__PROJECT) $(__PKG_PROJECT)
+	GOPATH=${__GOPATH} go build -o $(__DIST)/$(__PROJECT)-cli $(__PKG_PROJECT)/tool/$(__PROJECT)-cli
 
 
 test:
@@ -55,20 +55,20 @@ bench:
 	@echo "bench"
 
 gen: gen-main gen-app gen-client gen-swagger gen-schema gen-js
-	@#GOPATH=$(__PWD) ./bin/goagen bootstrap -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
+	@#GOPATH=$(__GOPATH) ./bin/goagen bootstrap -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
 
 gen-main:
-	GOPATH=$(__PWD) ./bin/goagen main -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
+	GOPATH=$(__GOPATH) ./bin/goagen main -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
 gen-app:
-	GOPATH=$(__PWD) ./bin/goagen app -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
+	GOPATH=$(__GOPATH) ./bin/goagen app -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
 gen-client:
-	GOPATH=$(__PWD) ./bin/goagen client -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
+	GOPATH=$(__GOPATH) ./bin/goagen client -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
 gen-swagger:
-	GOPATH=$(__PWD) ./bin/goagen swagger -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_PUBLIC_DIR)
+	GOPATH=$(__GOPATH) ./bin/goagen swagger -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_PUBLIC_DIR)
 gen-schema:
-	GOPATH=$(__PWD) ./bin/goagen schema -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_PUBLIC_DIR)
+	GOPATH=$(__GOPATH) ./bin/goagen schema -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_PUBLIC_DIR)
 gen-js:
-	GOPATH=$(__PWD) ./bin/goagen js -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_PUBLIC_DIR)
+	GOPATH=$(__GOPATH) ./bin/goagen js -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_PUBLIC_DIR)
 
 .PHONY: all \
 	clean \
