@@ -1,3 +1,4 @@
+__PWD=$(shell pwd)
 __BIN=bin
 __SRC=src
 __PKG=pkg
@@ -12,7 +13,8 @@ __PUBLIC=public
 
 __PROG=$(__DIST)/$(__NAME)
 __PATH=$(__BIN):$$PATH
-__GOPATH=$(shell pwd)
+__GOPATH=$(__PWD)
+__VENDOR_SHELL=$(__PWD)/vendor
 
 __SRC_GITHUB_DIR=$(__SRC)/$(__GITHUB)
 __SRC_ORGS_DIR=$(__SRC_GITHUB_DIR)/$(__ORGS)
@@ -32,10 +34,10 @@ clean:
 	rm -rf $(__BIN)
 	rm -rf $(__PKG)
 	rm -rf $(__DIST)
-	vendor uninstall
+	$(__VENDOR_SHELL) uninstall
 
 deps:
-	vendor install
+	$(__VENDOR_SHELL) install
 
 start:
 	@#GOPATH=${__GOPATH} go run  $(__SRC_PROJECT_DIR)/*.go
