@@ -1,0 +1,11 @@
+# {scm} {repository url} {repository name} {recursive flag}
+# - scm (Required)
+# - repository url (Required)
+# - repository name (Required)
+# - recursive flag (Optional)
+#
+# sparator:space
+#
+# ex) git github.com/goadesign/goa 8f0fdca409904318050f9e03579c3878f8928826 recursive
+
+git github.com/goadesign/goa 398e76a5b137cd5d46d6a2973015c92fa9e0645a recursive

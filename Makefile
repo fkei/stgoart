@@ -1,87 +1,30 @@
-__PWD=$(shell pwd)
-__BIN=bin
-__SRC=src
-__PKG=pkg
-__DIST=dist
-
-__GITHUB=github.com
-__ORGS=fkei
-__NAME=stgoart
-__PROJECT=$(__NAME)
-__DESIGN=design
-__PUBLIC=public
-
-__PROG=$(__DIST)/$(__NAME)
-__PATH=$(__BIN):$$PATH
-__GOPATH=$(__PWD)
-__VENDOR_SHELL=$(__PWD)/vendor
-
-__SRC_GITHUB_DIR=$(__SRC)/$(__GITHUB)
-__SRC_ORGS_DIR=$(__SRC_GITHUB_DIR)/$(__ORGS)
-
-__SRC_PROJECT_DIR=$(__SRC_ORGS_DIR)/$(__PROJECT)
-__SRC_PROJECT_PUBLIC_DIR=$(__SRC_PROJECT_DIR)/$(__PUBLIC)
-__PKG_PROJECT=$(__GITHUB)/$(__ORGS)/$(__PROJECT)
-
-__SRC_PROJECT_DESIGN_DIR=$(__SRC_PROJECT_DIR)/$(__DESIGN)
-__PKG_PROJECT_DESIGN=$(__GITHUB)/$(__ORGS)/$(__PROJECT)/$(__DESIGN)
-
-TARGET=$(target)
+PWD=$(shell pwd)
 
 all: deps gen start
 
 clean:
-	rm -rf $(__BIN)
-	rm -rf $(__PKG)
-	rm -rf $(__DIST)
-	$(__VENDOR_SHELL) uninstall
+	rm -rf bin;
+	rm -rf pkg
+	rm -rf dist
+	./cdep uninstall
 
 deps:
-	$(__VENDOR_SHELL) install
+	./cdep install
 
 start:
-	@#GOPATH=${__GOPATH} go run  $(__SRC_PROJECT_DIR)/*.go
-	cd $(__SRC_PROJECT_DIR); \
-		GOPATH=${__GOPATH} go run *.go
+	cd src/github.com/fkei/stgoart; GOPATH=$(PWD) go run *.go
 
 build:
-	mkdir -p $(__DIST)
-	GOPATH=${__GOPATH} go build -o $(__DIST)/$(__PROJECT) $(__PKG_PROJECT)
-	GOPATH=${__GOPATH} go build -o $(__DIST)/$(__PROJECT)-cli $(__PKG_PROJECT)/tool/$(__PROJECT)-cli
+	mkdir -p dist
+	GOPATH=$(PWD) go build -o dist/stgoart $(__PKG_PROJECT)
+	GOPATH=$(PWD) go build -o dist/stgoart-cli github.com/fkei/stgoart/tool/stgoart-cli
 
+gen:
+	GOPATH=$(PWD) ./bin/goagen main    -d github.com/fkei/stgoart/design -o ./src/github.com/fkei/stgoart
+	GOPATH=$(PWD) ./bin/goagen app     -d github.com/fkei/stgoart/design -o ./src/github.com/fkei/stgoart
+	GOPATH=$(PWD) ./bin/goagen client  -d github.com/fkei/stgoart/design -o ./src/github.com/fkei/stgoart
+	GOPATH=$(PWD) ./bin/goagen swagger -d github.com/fkei/stgoart/design -o ./src/github.com/fkei/stgoart
+	GOPATH=$(PWD) ./bin/goagen schema  -d github.com/fkei/stgoart/design -o ./src/github.com/fkei/stgoart
+	GOPATH=$(PWD) ./bin/goagen js      -d github.com/fkei/stgoart/design -o ./src/github.com/fkei/stgoart
 
-test:
-	@echo "test"
-
-bench:
-	@echo "bench"
-
-gen: gen-main gen-app gen-client gen-swagger gen-schema gen-js
-	@#GOPATH=$(__GOPATH) ./bin/goagen bootstrap -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
-
-gen-main:
-	GOPATH=$(__GOPATH) ./bin/goagen main -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
-gen-app:
-	GOPATH=$(__GOPATH) ./bin/goagen app -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
-gen-client:
-	GOPATH=$(__GOPATH) ./bin/goagen client -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_DIR)
-gen-swagger:
-	GOPATH=$(__GOPATH) ./bin/goagen swagger -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_PUBLIC_DIR)
-gen-schema:
-	GOPATH=$(__GOPATH) ./bin/goagen schema -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_PUBLIC_DIR)
-gen-js:
-	GOPATH=$(__GOPATH) ./bin/goagen js -d $(__PKG_PROJECT_DESIGN) -o $(__SRC_PROJECT_PUBLIC_DIR)
-
-.PHONY: all \
-	clean \
-	deps \
-	start \
-	test \
-	bench \
-	gen \
-	gen-main \
-	gen-app \
-	gen-client \
-	gen-swagger \
-	gen-schema \
-	gen-js
+.PHONY: all clean deps start build gen
